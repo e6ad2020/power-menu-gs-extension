@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Shutdown Dialogue\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-14 12:00+0000\n"
-"PO-Revision-Date: 2026-01-14 12:00+0000\n"
+"POT-Creation-Date: 2026-04-15 12:00+0000\n"
+"PO-Revision-Date: 2026-04-15 12:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -11,30 +11,50 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:77
+#: extension.js
 msgid "Select an action:"
 msgstr "اختر إجراء:"
 
-#: extension.js:86
+#: extension.js prefs.js
 msgid "Shutdown"
 msgstr "إيقاف التشغيل"
 
-#: extension.js:87
+#: extension.js prefs.js
 msgid "Suspend"
 msgstr "وضع السكون"
 
-#: extension.js:88
+#: extension.js prefs.js
 msgid "Restart"
 msgstr "إعادة التشغيل"
 
-#: extension.js:89
+#: extension.js prefs.js
 msgid "Log Out"
 msgstr "تسجيل الخروج"
 
-#: extension.js:125
+#: extension.js
 msgid "OK"
 msgstr "حسناً"
 
-#: extension.js:134
+#: extension.js
 msgid "Cancel"
 msgstr "إلغاء"
+
+#: prefs.js
+msgid "Actions"
+msgstr "الإجراءات"
+
+#: prefs.js
+msgid "Dialogue Actions"
+msgstr "إجراءات نافذة الإيقاف"
+
+#: prefs.js
+msgid "Configure which actions appear in the shutdown dialogue and their order. Use the arrow buttons to reorder."
+msgstr "اختر الإجراءات التي تظهر في نافذة الإيقاف وترتيبها. استخدم أزرار الأسهم لإعادة الترتيب."
+
+#: prefs.js
+msgid "Move up"
+msgstr "تحريك لأعلى"
+
+#: prefs.js
+msgid "Move down"
+msgstr "تحريك لأسفل"

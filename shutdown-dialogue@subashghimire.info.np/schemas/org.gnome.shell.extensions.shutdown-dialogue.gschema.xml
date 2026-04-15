@@ -6,5 +6,15 @@
       <summary>Custom keybinding for Alt+F4</summary>
       <description>Custom keybinding for Alt+F4</description>
     </key>
+    <key name="action-order" type="as">
+      <default>['poweroff', 'suspend', 'reboot', 'logout']</default>
+      <summary>Order of actions in the shutdown dialogue</summary>
+      <description>The order of actions displayed in the shutdown dialogue. Available actions: poweroff, suspend, reboot, logout.</description>
+    </key>
+    <key name="action-visibility" type="as">
+      <default>['poweroff', 'suspend', 'reboot', 'logout']</default>
+      <summary>Visible actions in the shutdown dialogue</summary>
+      <description>List of actions that are visible in the shutdown dialogue. Only actions listed here will be shown.</description>
+    </key>
   </schema>
 </schemalist>

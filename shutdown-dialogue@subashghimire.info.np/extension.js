@@ -91,19 +91,50 @@ export default class ShutdownDialogueExtension extends Extension {
 		this._optionItems = [];
 		this._selectedOptionIndex = 0;
 
-		this._options = [
-			{ name: this.gettext('Shutdown'), action: 'poweroff', icon: 'system-shutdown-symbolic' },
-			{ name: this.gettext('Suspend'), action: 'suspend', icon: 'weather-clear-night-symbolic' },
-			{ name: this.gettext('Restart'), action: 'reboot', icon: 'system-reboot-symbolic' },
-			{ name: this.gettext('Log Out'), action: 'logout', icon: 'system-log-out-symbolic' }
-		];
+		const allActions = {
+			'poweroff': { name: this.gettext('Shutdown'), icon: 'system-shutdown-symbolic' },
+			'suspend': { name: this.gettext('Suspend'), icon: 'weather-clear-night-symbolic' },
+			'reboot': { name: this.gettext('Restart'), icon: 'system-reboot-symbolic' },
+			'logout': { name: this.gettext('Log Out'), icon: 'system-log-out-symbolic' },
+		};
+
+		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
+		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
+
+		this._options = [];
+		for (const actionId of actionOrder) {
+			if (actionVisibility.includes(actionId) && allActions[actionId]) {
+				this._options.push({
+					name: allActions[actionId].name,
+					action: actionId,
+					icon: allActions[actionId].icon,
+				});
+			}
+		}
 
 		this._options.forEach((option, index) => {
 			const itemBox = new St.BoxLayout({
 				vertical: false,
 				style_class: 'option-item',
 				x_align: Clutter.ActorAlign.FILL,
-				y_align: Clutter.ActorAlign.CENTER
+				y_align: Clutter.ActorAlign.CENTER,
+				reactive: true,
+				track_hover: true,
+			});
+
+			itemBox.connect('button-press-event', () => {
+				this._selectedOptionIndex = index;
+				this._updateOptionStyles();
+				dialog.close();
+				this._executeAction(option.action);
+				return Clutter.EVENT_STOP;
+			});
+
+			itemBox.connect('notify::hover', (actor) => {
+				if (actor.hover) {
+					this._selectedOptionIndex = index;
+					this._updateOptionStyles();
+				}
 			});
 
 			const icon = new St.Icon({
