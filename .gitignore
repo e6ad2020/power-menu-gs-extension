@@ -1,2 +1,5 @@
-shutdown-dialogue@subashghimire.info.np.zip
+power-menu@e6ad2020.zip
 *.compiled
+venv/
+.DS_Store
+.vscode/
