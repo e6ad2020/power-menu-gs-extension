@@ -27,6 +27,11 @@ export default class ShutdownDialogueExtension extends Extension {
 		this._customKeybindingsSettings = null;
 		if (this._watchId) {
 			GLib.Source.remove(this._watchId);
+			this._watchId = null;
+		}
+		if (this._dialog) {
+			this._dialog.close();
+			this._dialog = null;
 		}
 	}
 
@@ -64,10 +69,17 @@ export default class ShutdownDialogueExtension extends Extension {
 	}
 
 	_showShutdownDialogue() {
-		const dialog = new ModalDialog.ModalDialog({
+		if (this._dialog) {
+			this._dialog.close();
+			this._dialog = null;
+		}
+
+		this._dialog = new ModalDialog.ModalDialog({
 			destroyOnClose: false,
 			styleClass: 'shutdown-dialogue',
 		});
+
+		const dialog = this._dialog;
 
 		const mainContentBox = new St.BoxLayout({
 			vertical: true,
