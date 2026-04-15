@@ -62,6 +62,18 @@
 
 ---
 
+### 💡 Pro Tip: Faster Workflow
+
+Since this extension triggers when no windows are focused (on the desktop), you can make it even faster by setting a shortcut to "Show Desktop":
+
+1. Set **Super + D** to hide all windows:
+   ```sh
+   gsettings set org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
+   ```
+2. Now you can simply press **Super + D** followed by **Alt + F4** to access the power menu from anywhere!
+
+---
+
 ### Usage
 
 - Press **Alt+F4** when no windows are active to trigger the dialogue.
