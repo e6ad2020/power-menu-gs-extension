@@ -1,34 +1,52 @@
-# Power Menu
+<p align="center">
+  <img src="./assets/icon.svg" width="160" height="160" alt="Power Menu Logo">
+</p>
 
-This GNOME Shell extension provides a custom keybinding (default Alt+F4) to show a power dialogue (Shutdown, Restart, Suspend, Log Out) when no windows are open.
+<h1 align="center">Power Menu</h1>
 
-# Screenshots
+<p align="center">
+  A modern, interactive power dialogue for GNOME Shell.
+  <br>
+  Easily manage your session with Shutdown, Restart, Suspend, and Log Out options.
+</p>
 
-![Power Menu](./assets/icon.svg)
+<p align="center">
+  Built with ❤️ for the GNOME community.
+</p>
 
-![Preview](./assets/preview.png)
+---
 
-## Features
+### Features
 
-- Overrides the default Alt+F4 keybinding.
-- Shows a notification when Alt+F4 is pressed and no windows are open.
-- Restores the original keybinding when the extension is disabled.
-- Customizable action order and visibility in settings.
-- Mouse support (hover selection and click confirmation).
-- Supports GNOME 45 up to 50.
+- **Custom Keybinding:** Overrides the default Alt+F4 to show the dialogue when no windows are open.
+- **Modern UI:** Clean, polished design that blends perfectly with GNOME Shell.
+- **Customizable:** Reorder or hide actions through the settings menu.
+- **Interactive:** Supports both keyboard navigation (arrows) and mouse interaction (hover & click).
+- **Localized:** Full support for Arabic and English languages.
+- **GNOME Ready:** Compatible with GNOME versions 45 up to 50.
 
-## Installation
+---
 
-### Manual Installation
+### Screenshots
 
-1. Clone the repository to your local machine:
+<p align="center">
+  <img src="./assets/preview.png" alt="Power Menu Preview" width="600">
+</p>
+
+---
+
+### Installation
+
+#### Manual Installation
+
+1. Clone the repository:
     ```sh
     git clone https://github.com/e6ad2020/power-menu-gs-extension.git
     ```
 
-2. Navigate to the extension directory:
+2. Navigate to the directory:
     ```sh
-    cd shutdown-dialogue-gs-extension
+    cd power-menu-gs-extension
     ```
 
 3. Install the extension:
@@ -38,16 +56,20 @@ This GNOME Shell extension provides a custom keybinding (default Alt+F4) to show
 
 4. Restart GNOME Shell:
     - **Wayland:** Log out and log back in.
-    - **X11:** Press Alt+F2, type 'r', and press Enter.
+    - **X11:** Press `Alt+F2`, type `r`, and press `Enter`.
 
-5. Enable the extension using GNOME Extensions app.
+5. Enable the extension using the **Extensions** app.
 
-## Usage
+---
 
-- Press Alt+F4 to trigger the power dialogue when no windows are open.
-- Use arrow keys or mouse to select an action.
-- Press Enter or click to confirm.
+### Usage
 
-## License
+- Press **Alt+F4** when no windows are active to trigger the dialogue.
+- Use **Arrow Keys** or **Mouse** to select an action.
+- Press **Enter** or **Click** to confirm.
+
+---
+
+### License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
