@@ -37,6 +37,15 @@
 
 ### Installation
 
+### Automatic Installation
+
+1. Install the extension from the GNOME Extensions website:
+    
+    [Shutdown Dialogue Extension](https://extensions.gnome.org/extension/7444/shutdown-dialogue/)
+    
+    [![Install on GNOME Shell](https://pbs.twimg.com/media/D6s8OS2U8AAaLNQ.png)](https://extensions.gnome.org/extension/9710/power-menu/)
+
+
 #### Manual Installation
 
 1. Clone the repository:
