@@ -37,7 +37,7 @@ msgstr "OK"
 
 #: extension.js
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr "Abbrechen"
 
 #: prefs.js
 msgid "Actions"
