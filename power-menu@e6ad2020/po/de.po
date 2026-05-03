@@ -57,4 +57,4 @@ msgstr "Nach oben"
 
 #: prefs.js
 msgid "Move down"
-msgstr "Nch unten"
+msgstr "Nach unten"
