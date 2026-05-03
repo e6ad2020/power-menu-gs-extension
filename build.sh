@@ -10,7 +10,7 @@ cd "$EXT_ID"
 mkdir -p locale/ar/LC_MESSAGES
 mkdir -p locale/de/LC_MESSAGES
 msgfmt po/ar.po -o "locale/ar/LC_MESSAGES/$EXT_ID.mo"
-msgfmt po/de.po -o "locale/ar/LC_MESSAGES/$EXT_ID.mo"
+msgfmt po/de.po -o "locale/de/LC_MESSAGES/$EXT_ID.mo"
 
 # 2. Build the ZIP file
 # -x excludes files that are unnecessary or should not be shipped for review
