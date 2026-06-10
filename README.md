@@ -22,7 +22,7 @@
 - **Modern UI:** Clean, polished design that blends perfectly with GNOME Shell.
 - **Customizable:** Reorder or hide actions through the settings menu.
 - **Interactive:** Supports both keyboard navigation (arrows) and mouse interaction (hover & click).
-- **Localized:** Full support for Arabic, German, Brazilian Portuguese and English languages.
+- **Localized:** Full support for Arabic, German, Brazilian Portuguese and English languages — see [Supported Languages](#supported-languages).
 - **GNOME Ready:** Compatible with GNOME versions 45 up to 50.
 
 ---
@@ -94,3 +94,38 @@ Since this extension triggers when no windows are focused (on the desktop), you 
 ### License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+### 🌐 Supported Languages
+
+| Flag | Language | Locale Code |
+|------|----------|-------------|
+| 🇺🇸 | English | `en` |
+| 🇸🇦 | Arabic | `ar` |
+| 🇩🇪 | German | `de` |
+| 🇧🇷 | Brazilian Portuguese | `pt_BR` |
+
+#### ➕ Adding a New Language
+
+Want to see Power Menu in your language? Contributions are welcome!
+
+1. Copy [`translation_template.po`](translation_template.po) and name it after your locale code (e.g. `fr.po` for French, `es.po` for Spanish).
+2. Fill in the `msgstr ""` fields with your translations.
+3. Update the `Language` and `Language-Team` fields in the file header.
+4. Place the file under `power-menu@e6ad2020/po/`.
+5. Open a pull request with the title: **`feat: add <Language> translation`** — and you'll be credited in the Contributors list! 🎉
+
+---
+
+### 👥 Contributors
+
+Thanks to everyone who helped make this extension better!
+
+| Contributor | Role |
+|-------------|------|
+| [Eyad (e6ad2020)](https://github.com/e6ad2020) | Maintainer — UI redesign, localization system, preferences, icons & animations |
+| [PublisherName](https://github.com/PublisherName) | Original author of the upstream fork |
+| [Subash Ghimire](https://github.com/PublisherName) | GNOME 48/49/50 support, dark mode fixes (upstream) |
+| [Stubennerd](https://github.com/Stubennerd) | German translation |
+| [Izak A.](https://github.com/izak-ag) | Brazilian Portuguese translation |
