@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Power Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-05 12:50-0300\n"
+"PO-Revision-Date: 2026-06-05 12:50-0300\n"
+"Last-Translator: \n"
+"Language-Team: Portuguese (Brazil)\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js
+msgid "Select an action:"
+msgstr "Selecione uma ação:"
+
+#: extension.js prefs.js
+msgid "Shutdown"
+msgstr "Desligar"
+
+#: extension.js prefs.js
+msgid "Suspend"
+msgstr "Suspender"
+
+#: extension.js prefs.js
+msgid "Restart"
+msgstr "Reiniciar"
+
+#: extension.js prefs.js
+msgid "Log Out"
+msgstr "Encerrar Sessão"
+
+#: extension.js
+msgid "OK"
+msgstr "OK"
+
+#: extension.js
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: prefs.js
+msgid "Actions"
+msgstr "Ações"
+
+#: prefs.js
+msgid "Dialogue Actions"
+msgstr "Diálogo de Ações"
+
+#: prefs.js
+msgid "Configure which actions appear in the shutdown dialogue and their order. Use the arrow buttons to reorder."
+msgstr "Configure quais ações aparecerão no diálogo de desligamento e a ordem em que elas serão exibidas. Use os botões de seta para reordená-las."
+
+#: prefs.js
+msgid "Move up"
+msgstr "Mover para cima"
+
+#: prefs.js
+msgid "Move down"
+msgstr "Mover para baixo"
