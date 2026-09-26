@@ -23,7 +23,7 @@
 - **Customizable:** Reorder or hide actions through the settings menu.
 - **Interactive:** Supports both keyboard navigation (arrows) and mouse interaction (hover & click).
 - **Localized:** Full support for Arabic, German, Brazilian Portuguese and English languages — see [Supported Languages](#supported-languages).
-- **GNOME Ready:** Compatible with GNOME versions 45 up to 50.
+- **GNOME Ready:** Compatible with GNOME versions 45 up to 51.
 
 ---
 
