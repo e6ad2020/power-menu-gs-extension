@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Power Menu\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-26 18:30+0300\n"
+"PO-Revision-Date: 2026-09-27 18:30+0300\n"
+"Last-Translator: \n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extension.js
+msgid "Select an action:"
+msgstr "Выберите действие:"
+
+#: extension.js prefs.js
+msgid "Shutdown"
+msgstr "Выключение"
+
+#: extension.js prefs.js
+msgid "Suspend"
+msgstr "Режим ожидания"
+
+#: extension.js prefs.js
+msgid "Restart"
+msgstr "Перезапуск"
+
+#: extension.js prefs.js
+msgid "Log Out"
+msgstr "Выход"
+
+#: extension.js
+msgid "OK"
+msgstr "ОК"
+
+#: extension.js
+msgid "Cancel"
+msgstr "Отмена"
+
+#: prefs.js
+msgid "Actions"
+msgstr "Действия"
+
+#: prefs.js
+msgid "Dialogue Actions"
+msgstr "Действия в Диалоговом Окне"
+
+#: prefs.js
+msgid "Configure which actions appear in the shutdown dialogue and their order. Use the arrow buttons to reorder."
+msgstr "Выберите, какие действия и в каком порядке будут показаны в диалоговом окне выключения. Используйте стрелки, чтобы изменить порядок."
+
+#: prefs.js
+msgid "Move up"
+msgstr "Переместить выше"
+
+#: prefs.js
+msgid "Move down"
+msgstr "Переместить ниже"
