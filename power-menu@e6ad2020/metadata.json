@@ -12,6 +12,7 @@
         "50",
         "51"
     ],
+    "settings-schema": "org.gnome.shell.extensions.power-menu",
     "version": 14,
     "gettext-domain": "power-menu@e6ad2020"
 }

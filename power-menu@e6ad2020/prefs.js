@@ -30,8 +30,8 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      *
      * @param {Adw.PreferencesWindow} window - The preferences window provided by GNOME
      */
-    fillPreferencesWindow(window) {
-        const settings = this.getSettings('org.gnome.shell.extensions.power-menu');
+    async fillPreferencesWindow(window) {
+        const settings = this.getSettings();
 
         window.set_default_size(500, 500);
 

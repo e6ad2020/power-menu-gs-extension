@@ -25,7 +25,7 @@ export default class PowerMenuExtension extends Extension {
      */
 	enable() {
 		this._wmKeybindingsSettings = new Gio.Settings({ schema_id: 'org.gnome.desktop.wm.keybindings' });
-		this._customKeybindingsSettings = this.getSettings('org.gnome.shell.extensions.power-menu');
+		this._customKeybindingsSettings = this.getSettings();
 		this._disableCloseBinding();
 		this._enableCustomAltF4Binding();
 		this._selectedOptionIndex = 0;
@@ -99,7 +99,7 @@ export default class PowerMenuExtension extends Extension {
 		const dialog = this._dialog;
 
 		const mainContentBox = new St.BoxLayout({
-			vertical: true,
+			orientation: Clutter.Orientation.VERTICAL,
 			style_class: 'dialog-content'
 		});
 		dialog.contentLayout.add_child(mainContentBox);
@@ -112,7 +112,7 @@ export default class PowerMenuExtension extends Extension {
 		mainContentBox.add_child(titleLabel);
 
 		const optionsContainer = new St.BoxLayout({
-			vertical: true,
+			orientation: Clutter.Orientation.VERTICAL,
 			x_align: Clutter.ActorAlign.CENTER
 		});
 		mainContentBox.add_child(optionsContainer);
@@ -142,28 +142,18 @@ export default class PowerMenuExtension extends Extension {
 		}
 
 		this._options.forEach((option, index) => {
-			const itemBox = new St.BoxLayout({
-				vertical: false,
+			const itemButton = new St.Button({
 				style_class: 'option-item',
 				x_align: Clutter.ActorAlign.FILL,
 				y_align: Clutter.ActorAlign.CENTER,
 				reactive: true,
+				can_focus: true,
 				track_hover: true,
 			});
 
-			itemBox.connect('button-press-event', () => {
-				this._selectedOptionIndex = index;
-				this._updateOptionStyles();
-				dialog.close();
-				this._executeAction(option.action);
-				return Clutter.EVENT_STOP;
-			});
-
-			itemBox.connect('notify::hover', (actor) => {
-				if (actor.hover) {
-					this._selectedOptionIndex = index;
-					this._updateOptionStyles();
-				}
+			const itemBox = new St.BoxLayout({
+				orientation: Clutter.Orientation.HORIZONTAL,
+				y_align: Clutter.ActorAlign.CENTER,
 			});
 
 			const icon = new St.Icon({
@@ -181,9 +171,24 @@ export default class PowerMenuExtension extends Extension {
 
 			itemBox.add_child(icon);
 			itemBox.add_child(label);
+			itemButton.set_child(itemBox);
 
-			optionsContainer.add_child(itemBox);
-			this._optionItems.push(itemBox);
+			itemButton.connect('clicked', () => {
+				this._selectedOptionIndex = index;
+				this._updateOptionStyles();
+				dialog.close();
+				this._executeAction(option.action);
+			});
+
+			itemButton.connect('notify::hover', (actor) => {
+				if (actor.hover) {
+					this._selectedOptionIndex = index;
+					this._updateOptionStyles();
+				}
+			});
+
+			optionsContainer.add_child(itemButton);
+			this._optionItems.push(itemButton);
 		});
 
 		this._updateOptionStyles();
@@ -207,21 +212,41 @@ export default class PowerMenuExtension extends Extension {
 			}
 		]);
 
-		dialog.connect('key-press-event', (actor, event) => {
-			const symbol = event.get_key_symbol();
+		if (Clutter.KeyController) {
+			const keyController = new Clutter.KeyController();
+			keyController.connect('key-press', () => {
+				const [, symbol] = keyController.get_key();
 
-			if (symbol === Clutter.KEY_Up) {
-				this._selectedOptionIndex = (this._selectedOptionIndex - 1 + this._options.length) % this._options.length;
-				this._updateOptionStyles();
-				return Clutter.EVENT_STOP;
-			} else if (symbol === Clutter.KEY_Down) {
-				this._selectedOptionIndex = (this._selectedOptionIndex + 1) % this._options.length;
-				this._updateOptionStyles();
-				return Clutter.EVENT_STOP;
-			}
+				if (symbol === Clutter.KEY_Up) {
+					this._selectedOptionIndex = (this._selectedOptionIndex - 1 + this._options.length) % this._options.length;
+					this._updateOptionStyles();
+					return Clutter.EVENT_STOP;
+				} else if (symbol === Clutter.KEY_Down) {
+					this._selectedOptionIndex = (this._selectedOptionIndex + 1) % this._options.length;
+					this._updateOptionStyles();
+					return Clutter.EVENT_STOP;
+				}
 
-			return Clutter.EVENT_PROPAGATE;
-		});
+				return Clutter.EVENT_PROPAGATE;
+			});
+			dialog.add_action(keyController);
+		} else {
+			dialog.connect('key-press-event', (actor, event) => {
+				const symbol = event.get_key_symbol();
+
+				if (symbol === Clutter.KEY_Up) {
+					this._selectedOptionIndex = (this._selectedOptionIndex - 1 + this._options.length) % this._options.length;
+					this._updateOptionStyles();
+					return Clutter.EVENT_STOP;
+				} else if (symbol === Clutter.KEY_Down) {
+					this._selectedOptionIndex = (this._selectedOptionIndex + 1) % this._options.length;
+					this._updateOptionStyles();
+					return Clutter.EVENT_STOP;
+				}
+
+				return Clutter.EVENT_PROPAGATE;
+			});
+		}
 
 		dialog.open();
 	}
