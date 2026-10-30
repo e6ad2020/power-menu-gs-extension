@@ -22,7 +22,7 @@
 - **Modern UI:** Clean, polished design that blends perfectly with GNOME Shell.
 - **Customizable:** Reorder or hide actions through the settings menu.
 - **Interactive:** Supports both keyboard navigation (arrows) and mouse interaction (hover & click).
-- **Localized:** Full support for Arabic, German, Brazilian Portuguese and English languages — see [Supported Languages](#supported-languages).
+- **Localized:** Full support for Arabic, German, Brazilian Portuguese, Russian and English languages — see [Supported Languages](#supported-languages).
 - **GNOME Ready:** Compatible with GNOME versions 45 up to 51.
 
 ---
@@ -105,6 +105,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 | 🇸🇦 | Arabic | `ar` |
 | 🇩🇪 | German | `de` |
 | 🇧🇷 | Brazilian Portuguese | `pt_BR` |
+| 🇷🇺 | Russian | `ru` |
 
 #### ➕ Adding a New Language
 
