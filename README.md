@@ -157,5 +157,13 @@ Thanks to everyone who helped make this extension better!
       <sub>Translator</sub><br>
       <sub>🇧🇷 Brazilian Portuguese</sub>
     </td>
+    <td align="center" width="160">
+      <a href="https://github.com/iineolineii">
+        <img src="https://avatars.githubusercontent.com/u/135314083?v=4&s=100" width="80" height="80" alt="NeoLine" style="border-radius:50%"><br>
+        <b>NeoLine</b>
+      </a><br>
+      <sub>Translator</sub><br>
+      <sub>🇷🇺 Russian</sub>
+    </td>
   </tr>
 </table>
