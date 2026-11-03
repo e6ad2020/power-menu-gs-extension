@@ -75,19 +75,39 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
     }
 
     /**
+     * Return deduplicated recognized action IDs in configured order, or default actions if none exist
+     *
+     * @param {string[]} [order] - Configured action order
+     * @returns {string[]} Recognized action IDs in display order
+     */
+    _getValidActionOrder(order = this._settings.get_strv('action-order')) {
+        const orderedValidActions = order.filter(
+            (actionId, index) =>
+                Object.hasOwn(ACTION_DEFINITIONS, actionId) && order.indexOf(actionId) === index
+        );
+
+        return orderedValidActions.length > 0
+            ? orderedValidActions
+            : Object.keys(ACTION_DEFINITIONS);
+    }
+
+    /**
      * Return recognized visible action IDs for the current configuration
      *
      * @param {string[]} [visibility] - Configured visible action IDs
+     * @param {string[]} [order] - Configured action order
      * @returns {string[]} Recognized visible action IDs
      */
-    _getValidVisibleActions(visibility = this._settings.get_strv('action-visibility')) {
-        const actionOrder = this._settings.get_strv('action-order');
-        const orderedValidActions = actionOrder.filter(actionId => Boolean(ACTION_DEFINITIONS[actionId]));
-        const validActions = orderedValidActions.length > 0
-            ? [...new Set(orderedValidActions)]
-            : Object.keys(ACTION_DEFINITIONS);
+    _getValidVisibleActions(
+        visibility = this._settings.get_strv('action-visibility'),
+        order = this._settings.get_strv('action-order')
+    ) {
+        const validActions = this._getValidActionOrder(order);
+        const visibleSet = new Set(
+            visibility.filter(actionId => Object.hasOwn(ACTION_DEFINITIONS, actionId))
+        );
 
-        return validActions.filter(actionId => visibility.includes(actionId));
+        return validActions.filter(actionId => visibleSet.has(actionId));
     }
 
     /**
@@ -116,14 +136,13 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
         this._rows = [];
         this._toggles = new Map();
 
-        const actionOrder = this._settings.get_strv('action-order');
+        const actionOrder = this._getValidActionOrder();
         const actionVisibility = this._settings.get_strv('action-visibility');
-        const validVisibleActions = this._getValidVisibleActions(actionVisibility);
+        const validVisibleActions = this._getValidVisibleActions(actionVisibility, actionOrder);
 
         for (let i = 0; i < actionOrder.length; i++) {
             const actionId = actionOrder[i];
             const def = ACTION_DEFINITIONS[actionId];
-            if (!def) continue;
 
             const row = new Adw.ActionRow({
                 title: _(def.name),
@@ -192,7 +211,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      * @param {number} direction - -1 for up, 1 for down
      */
     _moveAction(actionId, direction) {
-        const order = this._settings.get_strv('action-order');
+        const order = this._getValidActionOrder();
         const index = order.indexOf(actionId);
         if (index < 0) return;
 
@@ -221,7 +240,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      * @param {boolean} visible - Visibility state
      */
     _setActionVisibility(actionId, visible) {
-        if (!ACTION_DEFINITIONS[actionId]) return;
+        if (!Object.hasOwn(ACTION_DEFINITIONS, actionId)) return;
 
         const visibility = this._settings.get_strv('action-visibility');
         const index = visibility.indexOf(actionId);

@@ -130,29 +130,25 @@ export default class PowerMenuExtension extends Extension {
 		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
 		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
 
+		const orderedActions = actionOrder.filter(
+			(actionId, index) =>
+				Object.hasOwn(allActions, actionId) && actionOrder.indexOf(actionId) === index
+		);
+		const fallbackOrder = orderedActions.length > 0
+			? orderedActions
+			: Object.keys(allActions);
+		const visibleActions = new Set(
+			actionVisibility.filter(actionId => Object.hasOwn(allActions, actionId))
+		);
+
 		this._options = [];
-		for (const actionId of actionOrder) {
-			if (actionVisibility.includes(actionId) && allActions[actionId]) {
+		for (const actionId of fallbackOrder) {
+			if (visibleActions.has(actionId)) {
 				this._options.push({
 					name: allActions[actionId].name,
 					action: actionId,
 					icon: allActions[actionId].icon,
 				});
-			}
-		}
-
-		if (this._options.length === 0) {
-			const fallbackOrder = actionOrder.some(actionId => allActions[actionId])
-				? actionOrder
-				: Object.keys(allActions);
-			for (const actionId of fallbackOrder) {
-				if (allActions[actionId] && !this._options.some(option => option.action === actionId)) {
-					this._options.push({
-						name: allActions[actionId].name,
-						action: actionId,
-						icon: allActions[actionId].icon,
-					});
-				}
 			}
 		}
 
@@ -214,7 +210,7 @@ export default class PowerMenuExtension extends Extension {
 				action: () => {
 					const selectedOption = this._options[this._selectedOptionIndex];
 					dialog.close();
-					if (selectedOption?.action) {
+					if (selectedOption?.action && Object.hasOwn(allActions, selectedOption.action)) {
 						this._executeAction(selectedOption.action);
 					}
 				},
@@ -274,6 +270,12 @@ export default class PowerMenuExtension extends Extension {
 			});
 		}
 
+		if (this._options.length === 0) {
+			dialog.close();
+			this._dialog = null;
+			return;
+		}
+
 		dialog.open();
 	}
 
@@ -306,9 +308,8 @@ export default class PowerMenuExtension extends Extension {
 			'reboot': 'Reboot',
 			'suspend': 'Suspend'
 		};
+		if (!Object.hasOwn(actionMap, action)) return;
 		const method = actionMap[action];
-
-		if (!method) return;
 
 		Gio.bus_get(Gio.BusType.SYSTEM, null, (source, result) => {
 			try {
