@@ -50,6 +50,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
         this._settings = settings;
         this._group = group;
         this._rows = [];
+        this._toggles = new Map();
 
         this._buildRows();
 
@@ -74,6 +75,37 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
     }
 
     /**
+     * Return recognized visible action IDs for the current configuration
+     *
+     * @param {string[]} [visibility] - Configured visible action IDs
+     * @returns {string[]} Recognized visible action IDs
+     */
+    _getValidVisibleActions(visibility = this._settings.get_strv('action-visibility')) {
+        const actionOrder = this._settings.get_strv('action-order');
+        const orderedValidActions = actionOrder.filter(actionId => Boolean(ACTION_DEFINITIONS[actionId]));
+        const validActions = orderedValidActions.length > 0
+            ? [...new Set(orderedValidActions)]
+            : Object.keys(ACTION_DEFINITIONS);
+
+        return validActions.filter(actionId => visibility.includes(actionId));
+    }
+
+    /**
+     * Synchronize switch sensitivity so the last visible action cannot be hidden
+     *
+     * @param {string[]} [visibility] - Configured visible action IDs
+     */
+    _updateToggleSensitivity(visibility = this._settings.get_strv('action-visibility')) {
+        const validVisibleActions = this._getValidVisibleActions(visibility);
+        const isLastVisibleAction = validVisibleActions.length <= 1;
+
+        for (const [actionId, toggle] of this._toggles.entries()) {
+            const isVisible = validVisibleActions.includes(actionId);
+            toggle.set_sensitive(!isVisible || !isLastVisibleAction);
+        }
+    }
+
+    /**
      * Build the list of actions in the preferences UI
      */
     _buildRows() {
@@ -82,9 +114,11 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
             this._group.remove(row);
         }
         this._rows = [];
+        this._toggles = new Map();
 
         const actionOrder = this._settings.get_strv('action-order');
         const actionVisibility = this._settings.get_strv('action-visibility');
+        const validVisibleActions = this._getValidVisibleActions(actionVisibility);
 
         for (let i = 0; i < actionOrder.length; i++) {
             const actionId = actionOrder[i];
@@ -96,9 +130,12 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
                 icon_name: def.icon,
             });
 
+            const isVisible = validVisibleActions.includes(actionId);
+
             // Visibility toggle
             const toggle = new Gtk.Switch({
-                active: actionVisibility.includes(actionId),
+                active: isVisible,
+                sensitive: !isVisible || validVisibleActions.length > 1,
                 valign: Gtk.Align.CENTER,
             });
             toggle.connect('notify::active', (sw) => {
@@ -106,6 +143,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
             });
             row.add_suffix(toggle);
             row.set_activatable_widget(toggle);
+            this._toggles.set(actionId, toggle);
 
             // Move up button
             const upButton = new Gtk.Button({
@@ -183,13 +221,33 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      * @param {boolean} visible - Visibility state
      */
     _setActionVisibility(actionId, visible) {
+        if (!ACTION_DEFINITIONS[actionId]) return;
+
         const visibility = this._settings.get_strv('action-visibility');
         const index = visibility.indexOf(actionId);
+
+        if (!visible) {
+            const remainingValidActions = this._getValidVisibleActions(visibility)
+                .filter(id => id !== actionId);
+
+            if (remainingValidActions.length === 0) {
+                const toggle = this._toggles.get(actionId);
+                if (toggle && !toggle.get_active()) {
+                    toggle.set_active(true);
+                }
+                this._updateToggleSensitivity(visibility);
+                return;
+            }
+        }
 
         if (visible && index < 0) {
             visibility.push(actionId);
         } else if (!visible && index >= 0) {
-            visibility.splice(index, 1);
+            for (let i = visibility.length - 1; i >= 0; i--) {
+                if (visibility[i] === actionId) {
+                    visibility.splice(i, 1);
+                }
+            }
         }
 
         // Block signals to avoid recursive UI rebuilds
@@ -200,5 +258,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
         if (this._visibilityChangedId) {
             this._settings.unblock_signal_handler(this._visibilityChangedId);
         }
+
+        this._updateToggleSensitivity(visibility);
     }
 }

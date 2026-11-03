@@ -141,6 +141,21 @@ export default class PowerMenuExtension extends Extension {
 			}
 		}
 
+		if (this._options.length === 0) {
+			const fallbackOrder = actionOrder.some(actionId => allActions[actionId])
+				? actionOrder
+				: Object.keys(allActions);
+			for (const actionId of fallbackOrder) {
+				if (allActions[actionId] && !this._options.some(option => option.action === actionId)) {
+					this._options.push({
+						name: allActions[actionId].name,
+						action: actionId,
+						icon: allActions[actionId].icon,
+					});
+				}
+			}
+		}
+
 		this._options.forEach((option, index) => {
 			const itemButton = new St.Button({
 				style_class: 'option-item',
@@ -197,8 +212,11 @@ export default class PowerMenuExtension extends Extension {
 			{
 				label: this.gettext('OK'),
 				action: () => {
+					const selectedOption = this._options[this._selectedOptionIndex];
 					dialog.close();
-					this._executeAction(this._options[this._selectedOptionIndex].action);
+					if (selectedOption?.action) {
+						this._executeAction(selectedOption.action);
+					}
 				},
 				key: Clutter.KEY_Return,
 				default: true
@@ -215,6 +233,10 @@ export default class PowerMenuExtension extends Extension {
 		if (Clutter.KeyController) {
 			const keyController = new Clutter.KeyController();
 			keyController.connect('key-press', () => {
+				if (this._options.length === 0) {
+					return Clutter.EVENT_PROPAGATE;
+				}
+
 				const [, symbol] = keyController.get_key();
 
 				if (symbol === Clutter.KEY_Up) {
@@ -232,6 +254,10 @@ export default class PowerMenuExtension extends Extension {
 			dialog.add_action(keyController);
 		} else {
 			dialog.connect('key-press-event', (actor, event) => {
+				if (this._options.length === 0) {
+					return Clutter.EVENT_PROPAGATE;
+				}
+
 				const symbol = event.get_key_symbol();
 
 				if (symbol === Clutter.KEY_Up) {
@@ -267,6 +293,8 @@ export default class PowerMenuExtension extends Extension {
      * @param {string} action - The action ID to execute
      */
 	_executeAction(action) {
+		if (!action) return;
+
 		if (action === 'logout') {
 			const command = ['/usr/bin/gnome-session-quit', '--logout', '--no-prompt'];
 			this._spawnCommand(command);
