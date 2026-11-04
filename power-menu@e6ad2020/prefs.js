@@ -50,6 +50,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
         this._settings = settings;
         this._group = group;
         this._rows = [];
+        this._toggles = new Map();
 
         this._buildRows();
 
@@ -70,7 +71,64 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
                 settings.disconnect(this._visibilityChangedId);
                 this._visibilityChangedId = null;
             }
+            this._rows = [];
+            this._toggles.clear();
+            this._group = null;
+            this._settings = null;
         });
+    }
+
+    /**
+     * Return deduplicated recognized action IDs in configured order, with any missing actions appended
+     *
+     * @param {string[]} [order] - Configured action order
+     * @returns {string[]} Recognized action IDs in display order
+     */
+    _getValidActionOrder(order = this._settings.get_strv('action-order')) {
+        const orderedValidActions = order.filter(
+            (actionId, index) =>
+                Object.hasOwn(ACTION_DEFINITIONS, actionId) && order.indexOf(actionId) === index
+        );
+        const missingActions = Object.keys(ACTION_DEFINITIONS).filter(
+            actionId => !orderedValidActions.includes(actionId)
+        );
+
+        return [...orderedValidActions, ...missingActions];
+    }
+
+    /**
+     * Return recognized visible action IDs for the current configuration
+     *
+     * @param {string[]} [visibility] - Configured visible action IDs
+     * @param {string[]} [order] - Configured action order
+     * @returns {string[]} Recognized visible action IDs
+     */
+    _getValidVisibleActions(
+        visibility = this._settings.get_strv('action-visibility'),
+        order = this._settings.get_strv('action-order')
+    ) {
+        const validActions = this._getValidActionOrder(order);
+        const visibleSet = new Set(
+            visibility.filter(actionId => Object.hasOwn(ACTION_DEFINITIONS, actionId))
+        );
+        const visibleActions = validActions.filter(actionId => visibleSet.has(actionId));
+
+        return visibleActions.length > 0 ? visibleActions : validActions;
+    }
+
+    /**
+     * Synchronize switch sensitivity so the last visible action cannot be hidden
+     *
+     * @param {string[]} [visibility] - Configured visible action IDs
+     */
+    _updateToggleSensitivity(visibility = this._settings.get_strv('action-visibility')) {
+        const validVisibleActions = this._getValidVisibleActions(visibility);
+        const isLastVisibleAction = validVisibleActions.length <= 1;
+
+        for (const [actionId, toggle] of this._toggles.entries()) {
+            const isVisible = validVisibleActions.includes(actionId);
+            toggle.set_sensitive(!isVisible || !isLastVisibleAction);
+        }
     }
 
     /**
@@ -82,23 +140,27 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
             this._group.remove(row);
         }
         this._rows = [];
+        this._toggles = new Map();
 
-        const actionOrder = this._settings.get_strv('action-order');
+        const actionOrder = this._getValidActionOrder();
         const actionVisibility = this._settings.get_strv('action-visibility');
+        const validVisibleActions = this._getValidVisibleActions(actionVisibility, actionOrder);
 
         for (let i = 0; i < actionOrder.length; i++) {
             const actionId = actionOrder[i];
             const def = ACTION_DEFINITIONS[actionId];
-            if (!def) continue;
 
             const row = new Adw.ActionRow({
                 title: _(def.name),
                 icon_name: def.icon,
             });
 
+            const isVisible = validVisibleActions.includes(actionId);
+
             // Visibility toggle
             const toggle = new Gtk.Switch({
-                active: actionVisibility.includes(actionId),
+                active: isVisible,
+                sensitive: !isVisible || validVisibleActions.length > 1,
                 valign: Gtk.Align.CENTER,
             });
             toggle.connect('notify::active', (sw) => {
@@ -106,6 +168,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
             });
             row.add_suffix(toggle);
             row.set_activatable_widget(toggle);
+            this._toggles.set(actionId, toggle);
 
             // Move up button
             const upButton = new Gtk.Button({
@@ -154,7 +217,7 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      * @param {number} direction - -1 for up, 1 for down
      */
     _moveAction(actionId, direction) {
-        const order = this._settings.get_strv('action-order');
+        const order = this._getValidActionOrder();
         const index = order.indexOf(actionId);
         if (index < 0) return;
 
@@ -183,22 +246,42 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
      * @param {boolean} visible - Visibility state
      */
     _setActionVisibility(actionId, visible) {
-        const visibility = this._settings.get_strv('action-visibility');
-        const index = visibility.indexOf(actionId);
+        if (!Object.hasOwn(ACTION_DEFINITIONS, actionId)) return;
 
-        if (visible && index < 0) {
-            visibility.push(actionId);
-        } else if (!visible && index >= 0) {
-            visibility.splice(index, 1);
+        const currentVisible = this._getValidVisibleActions();
+        const isCurrentlyVisible = currentVisible.includes(actionId);
+
+        if (!visible) {
+            const remainingValidActions = currentVisible.filter(id => id !== actionId);
+
+            if (remainingValidActions.length === 0) {
+                const toggle = this._toggles.get(actionId);
+                if (toggle && !toggle.get_active()) {
+                    toggle.set_active(true);
+                }
+                this._updateToggleSensitivity(currentVisible);
+                return;
+            }
         }
+
+        if (visible === isCurrentlyVisible) {
+            this._updateToggleSensitivity(currentVisible);
+            return;
+        }
+
+        const nextVisibility = visible
+            ? [...currentVisible, actionId]
+            : currentVisible.filter(id => id !== actionId);
 
         // Block signals to avoid recursive UI rebuilds
         if (this._visibilityChangedId) {
             this._settings.block_signal_handler(this._visibilityChangedId);
         }
-        this._settings.set_strv('action-visibility', visibility);
+        this._settings.set_strv('action-visibility', nextVisibility);
         if (this._visibilityChangedId) {
             this._settings.unblock_signal_handler(this._visibilityChangedId);
         }
+
+        this._updateToggleSensitivity(nextVisibility);
     }
 }

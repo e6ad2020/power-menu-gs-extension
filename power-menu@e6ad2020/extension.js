@@ -91,6 +91,47 @@ export default class PowerMenuExtension extends Extension {
 			this._dialog = null;
 		}
 
+		const allActions = {
+			'poweroff': { name: this.gettext('Shutdown'), icon: 'system-shutdown-symbolic' },
+			'suspend': { name: this.gettext('Suspend'), icon: 'weather-clear-night-symbolic' },
+			'reboot': { name: this.gettext('Restart'), icon: 'system-reboot-symbolic' },
+			'logout': { name: this.gettext('Log Out'), icon: 'system-log-out-symbolic' },
+		};
+
+		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
+		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
+
+		const orderedActions = actionOrder.filter(
+			(actionId, index) =>
+				Object.hasOwn(allActions, actionId) && actionOrder.indexOf(actionId) === index
+		);
+		const missingActions = Object.keys(allActions).filter(
+			actionId => !orderedActions.includes(actionId)
+		);
+		const fallbackOrder = [...orderedActions, ...missingActions];
+
+		const visibleActions = new Set(
+			actionVisibility.filter(actionId => Object.hasOwn(allActions, actionId))
+		);
+		const effectiveVisibleActions = visibleActions.size > 0
+			? visibleActions
+			: new Set(fallbackOrder);
+
+		this._options = [];
+		for (const actionId of fallbackOrder) {
+			if (effectiveVisibleActions.has(actionId)) {
+				this._options.push({
+					name: allActions[actionId].name,
+					action: actionId,
+					icon: allActions[actionId].icon,
+				});
+			}
+		}
+
+		if (this._options.length === 0) {
+			return;
+		}
+
 		this._dialog = new ModalDialog.ModalDialog({
 			destroyOnClose: false,
 			styleClass: 'power-menu',
@@ -120,34 +161,13 @@ export default class PowerMenuExtension extends Extension {
 		this._optionItems = [];
 		this._selectedOptionIndex = 0;
 
-		const allActions = {
-			'poweroff': { name: this.gettext('Shutdown'), icon: 'system-shutdown-symbolic' },
-			'suspend': { name: this.gettext('Suspend'), icon: 'weather-clear-night-symbolic' },
-			'reboot': { name: this.gettext('Restart'), icon: 'system-reboot-symbolic' },
-			'logout': { name: this.gettext('Log Out'), icon: 'system-log-out-symbolic' },
-		};
-
-		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
-		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
-
-		this._options = [];
-		for (const actionId of actionOrder) {
-			if (actionVisibility.includes(actionId) && allActions[actionId]) {
-				this._options.push({
-					name: allActions[actionId].name,
-					action: actionId,
-					icon: allActions[actionId].icon,
-				});
-			}
-		}
-
 		this._options.forEach((option, index) => {
 			const itemButton = new St.Button({
 				style_class: 'option-item',
 				x_align: Clutter.ActorAlign.FILL,
 				y_align: Clutter.ActorAlign.CENTER,
 				reactive: true,
-				can_focus: true,
+				can_focus: false,
 				track_hover: true,
 			});
 
@@ -197,8 +217,11 @@ export default class PowerMenuExtension extends Extension {
 			{
 				label: this.gettext('OK'),
 				action: () => {
+					const selectedOption = this._options[this._selectedOptionIndex];
 					dialog.close();
-					this._executeAction(this._options[this._selectedOptionIndex].action);
+					if (selectedOption?.action && Object.hasOwn(allActions, selectedOption.action)) {
+						this._executeAction(selectedOption.action);
+					}
 				},
 				key: Clutter.KEY_Return,
 				default: true
@@ -215,6 +238,10 @@ export default class PowerMenuExtension extends Extension {
 		if (Clutter.KeyController) {
 			const keyController = new Clutter.KeyController();
 			keyController.connect('key-press', () => {
+				if (this._options.length === 0) {
+					return Clutter.EVENT_PROPAGATE;
+				}
+
 				const [, symbol] = keyController.get_key();
 
 				if (symbol === Clutter.KEY_Up) {
@@ -232,6 +259,10 @@ export default class PowerMenuExtension extends Extension {
 			dialog.add_action(keyController);
 		} else {
 			dialog.connect('key-press-event', (actor, event) => {
+				if (this._options.length === 0) {
+					return Clutter.EVENT_PROPAGATE;
+				}
+
 				const symbol = event.get_key_symbol();
 
 				if (symbol === Clutter.KEY_Up) {
@@ -267,6 +298,8 @@ export default class PowerMenuExtension extends Extension {
      * @param {string} action - The action ID to execute
      */
 	_executeAction(action) {
+		if (!action) return;
+
 		if (action === 'logout') {
 			const command = ['/usr/bin/gnome-session-quit', '--logout', '--no-prompt'];
 			this._spawnCommand(command);
@@ -278,9 +311,8 @@ export default class PowerMenuExtension extends Extension {
 			'reboot': 'Reboot',
 			'suspend': 'Suspend'
 		};
+		if (!Object.hasOwn(actionMap, action)) return;
 		const method = actionMap[action];
-
-		if (!method) return;
 
 		Gio.bus_get(Gio.BusType.SYSTEM, null, (source, result) => {
 			try {
