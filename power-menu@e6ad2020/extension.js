@@ -167,7 +167,7 @@ export default class PowerMenuExtension extends Extension {
 				x_align: Clutter.ActorAlign.FILL,
 				y_align: Clutter.ActorAlign.CENTER,
 				reactive: true,
-				can_focus: true,
+				can_focus: false,
 				track_hover: true,
 			});
 
