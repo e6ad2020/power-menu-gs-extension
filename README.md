@@ -127,42 +127,42 @@ Thanks to everyone who helped make this extension better!
   <tr>
     <td align="center" width="120">
       <a href="https://github.com/e6ad2020">
-        <img src="https://avatars.githubusercontent.com/u/119390190?v=4&s=100" width="64" height="64" alt="Eyad" style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/e6ad2020.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="Eyad"><br>
         <b>Eyad</b>
       </a><br>
       <sub>Maintainer</sub>
     </td>
     <td align="center" width="120">
       <a href="https://github.com/Omar-0O">
-        <img src="https://avatars.githubusercontent.com/u/189334282?v=4&s=100" width="64" height="64" alt="Omar-0O" style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/Omar-0O.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="Omar-0O"><br>
         <b>Omar-0O</b>
       </a><br>
       <sub>Contributor</sub>
     </td>
     <td align="center" width="120">
       <a href="https://github.com/PublisherName">
-        <img src="https://avatars.githubusercontent.com/u/62213479?v=4&s=100" width="64" height="64" alt="PublisherName" style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/PublisherName.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="PublisherName"><br>
         <b>PublisherName</b>
       </a><br>
       <sub>Original Author</sub>
     </td>
     <td align="center" width="120">
       <a href="https://github.com/Stubennerd">
-        <img src="https://github.com/Stubennerd.png?size=100" width="64" height="64" alt="Stubennerd" style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/Stubennerd.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="Stubennerd"><br>
         <b>Stubennerd</b>
       </a><br>
       <sub>Translator 🇩🇪</sub>
     </td>
     <td align="center" width="120">
       <a href="https://github.com/izak-ag">
-        <img src="https://avatars.githubusercontent.com/u/91832540?v=4&s=100" width="64" height="64" alt="Izak A." style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/izak-ag.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="Izak A."><br>
         <b>Izak A.</b>
       </a><br>
       <sub>Translator 🇧🇷</sub>
     </td>
     <td align="center" width="120">
       <a href="https://github.com/iineolineii">
-        <img src="https://avatars.githubusercontent.com/u/135314083?v=4&s=100" width="64" height="64" alt="NeoLine" style="border-radius:50%"><br>
+        <img src="https://images.weserv.nl/?url=github.com/iineolineii.png&w=128&h=128&fit=cover&mask=circle" width="64" height="64" alt="NeoLine"><br>
         <b>NeoLine</b>
       </a><br>
       <sub>Translator 🇷🇺</sub>
