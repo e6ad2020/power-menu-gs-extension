@@ -91,6 +91,47 @@ export default class PowerMenuExtension extends Extension {
 			this._dialog = null;
 		}
 
+		const allActions = {
+			'poweroff': { name: this.gettext('Shutdown'), icon: 'system-shutdown-symbolic' },
+			'suspend': { name: this.gettext('Suspend'), icon: 'weather-clear-night-symbolic' },
+			'reboot': { name: this.gettext('Restart'), icon: 'system-reboot-symbolic' },
+			'logout': { name: this.gettext('Log Out'), icon: 'system-log-out-symbolic' },
+		};
+
+		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
+		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
+
+		const orderedActions = actionOrder.filter(
+			(actionId, index) =>
+				Object.hasOwn(allActions, actionId) && actionOrder.indexOf(actionId) === index
+		);
+		const missingActions = Object.keys(allActions).filter(
+			actionId => !orderedActions.includes(actionId)
+		);
+		const fallbackOrder = [...orderedActions, ...missingActions];
+
+		const visibleActions = new Set(
+			actionVisibility.filter(actionId => Object.hasOwn(allActions, actionId))
+		);
+		const effectiveVisibleActions = visibleActions.size > 0
+			? visibleActions
+			: new Set(fallbackOrder);
+
+		this._options = [];
+		for (const actionId of fallbackOrder) {
+			if (effectiveVisibleActions.has(actionId)) {
+				this._options.push({
+					name: allActions[actionId].name,
+					action: actionId,
+					icon: allActions[actionId].icon,
+				});
+			}
+		}
+
+		if (this._options.length === 0) {
+			return;
+		}
+
 		this._dialog = new ModalDialog.ModalDialog({
 			destroyOnClose: false,
 			styleClass: 'power-menu',
@@ -119,38 +160,6 @@ export default class PowerMenuExtension extends Extension {
 
 		this._optionItems = [];
 		this._selectedOptionIndex = 0;
-
-		const allActions = {
-			'poweroff': { name: this.gettext('Shutdown'), icon: 'system-shutdown-symbolic' },
-			'suspend': { name: this.gettext('Suspend'), icon: 'weather-clear-night-symbolic' },
-			'reboot': { name: this.gettext('Restart'), icon: 'system-reboot-symbolic' },
-			'logout': { name: this.gettext('Log Out'), icon: 'system-log-out-symbolic' },
-		};
-
-		const actionOrder = this._customKeybindingsSettings.get_strv('action-order');
-		const actionVisibility = this._customKeybindingsSettings.get_strv('action-visibility');
-
-		const orderedActions = actionOrder.filter(
-			(actionId, index) =>
-				Object.hasOwn(allActions, actionId) && actionOrder.indexOf(actionId) === index
-		);
-		const fallbackOrder = orderedActions.length > 0
-			? orderedActions
-			: Object.keys(allActions);
-		const visibleActions = new Set(
-			actionVisibility.filter(actionId => Object.hasOwn(allActions, actionId))
-		);
-
-		this._options = [];
-		for (const actionId of fallbackOrder) {
-			if (visibleActions.has(actionId)) {
-				this._options.push({
-					name: allActions[actionId].name,
-					action: actionId,
-					icon: allActions[actionId].icon,
-				});
-			}
-		}
 
 		this._options.forEach((option, index) => {
 			const itemButton = new St.Button({
@@ -268,12 +277,6 @@ export default class PowerMenuExtension extends Extension {
 
 				return Clutter.EVENT_PROPAGATE;
 			});
-		}
-
-		if (this._options.length === 0) {
-			dialog.close();
-			this._dialog = null;
-			return;
 		}
 
 		dialog.open();

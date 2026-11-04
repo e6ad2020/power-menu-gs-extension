@@ -71,11 +71,15 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
                 settings.disconnect(this._visibilityChangedId);
                 this._visibilityChangedId = null;
             }
+            this._rows = [];
+            this._toggles.clear();
+            this._group = null;
+            this._settings = null;
         });
     }
 
     /**
-     * Return deduplicated recognized action IDs in configured order, or default actions if none exist
+     * Return deduplicated recognized action IDs in configured order, with any missing actions appended
      *
      * @param {string[]} [order] - Configured action order
      * @returns {string[]} Recognized action IDs in display order
@@ -85,10 +89,11 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
             (actionId, index) =>
                 Object.hasOwn(ACTION_DEFINITIONS, actionId) && order.indexOf(actionId) === index
         );
+        const missingActions = Object.keys(ACTION_DEFINITIONS).filter(
+            actionId => !orderedValidActions.includes(actionId)
+        );
 
-        return orderedValidActions.length > 0
-            ? orderedValidActions
-            : Object.keys(ACTION_DEFINITIONS);
+        return [...orderedValidActions, ...missingActions];
     }
 
     /**
@@ -106,8 +111,9 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
         const visibleSet = new Set(
             visibility.filter(actionId => Object.hasOwn(ACTION_DEFINITIONS, actionId))
         );
+        const visibleActions = validActions.filter(actionId => visibleSet.has(actionId));
 
-        return validActions.filter(actionId => visibleSet.has(actionId));
+        return visibleActions.length > 0 ? visibleActions : validActions;
     }
 
     /**
@@ -242,42 +248,40 @@ export default class PowerMenuPreferences extends ExtensionPreferences {
     _setActionVisibility(actionId, visible) {
         if (!Object.hasOwn(ACTION_DEFINITIONS, actionId)) return;
 
-        const visibility = this._settings.get_strv('action-visibility');
-        const index = visibility.indexOf(actionId);
+        const currentVisible = this._getValidVisibleActions();
+        const isCurrentlyVisible = currentVisible.includes(actionId);
 
         if (!visible) {
-            const remainingValidActions = this._getValidVisibleActions(visibility)
-                .filter(id => id !== actionId);
+            const remainingValidActions = currentVisible.filter(id => id !== actionId);
 
             if (remainingValidActions.length === 0) {
                 const toggle = this._toggles.get(actionId);
                 if (toggle && !toggle.get_active()) {
                     toggle.set_active(true);
                 }
-                this._updateToggleSensitivity(visibility);
+                this._updateToggleSensitivity(currentVisible);
                 return;
             }
         }
 
-        if (visible && index < 0) {
-            visibility.push(actionId);
-        } else if (!visible && index >= 0) {
-            for (let i = visibility.length - 1; i >= 0; i--) {
-                if (visibility[i] === actionId) {
-                    visibility.splice(i, 1);
-                }
-            }
+        if (visible === isCurrentlyVisible) {
+            this._updateToggleSensitivity(currentVisible);
+            return;
         }
+
+        const nextVisibility = visible
+            ? [...currentVisible, actionId]
+            : currentVisible.filter(id => id !== actionId);
 
         // Block signals to avoid recursive UI rebuilds
         if (this._visibilityChangedId) {
             this._settings.block_signal_handler(this._visibilityChangedId);
         }
-        this._settings.set_strv('action-visibility', visibility);
+        this._settings.set_strv('action-visibility', nextVisibility);
         if (this._visibilityChangedId) {
             this._settings.unblock_signal_handler(this._visibilityChangedId);
         }
 
-        this._updateToggleSensitivity(visibility);
+        this._updateToggleSensitivity(nextVisibility);
     }
 }
