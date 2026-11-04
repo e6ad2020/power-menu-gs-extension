@@ -123,47 +123,49 @@ Want to see Power Menu in your language? Contributions are welcome!
 
 Thanks to everyone who helped make this extension better!
 
-<table>
+<table align="center">
   <tr>
-    <td align="center" width="160">
+    <td align="center" width="120">
       <a href="https://github.com/e6ad2020">
-        <img src="https://avatars.githubusercontent.com/u/119390190?v=4&s=100" width="80" height="80" alt="Eyad" style="border-radius:50%"><br>
+        <img src="https://avatars.githubusercontent.com/u/119390190?v=4&s=100" width="64" height="64" alt="Eyad" style="border-radius:50%"><br>
         <b>Eyad</b>
       </a><br>
-      <sub>Maintainer</sub><br>
-      <sub>UI redesign · localization · prefs · icons · animations</sub>
+      <sub>Maintainer</sub>
     </td>
-    <td align="center" width="160">
+    <td align="center" width="120">
+      <a href="https://github.com/Omar-0O">
+        <img src="https://avatars.githubusercontent.com/u/189334282?v=4&s=100" width="64" height="64" alt="Omar-0O" style="border-radius:50%"><br>
+        <b>Omar-0O</b>
+      </a><br>
+      <sub>Contributor</sub>
+    </td>
+    <td align="center" width="120">
       <a href="https://github.com/PublisherName">
-        <img src="https://avatars.githubusercontent.com/u/62213479?v=4&s=100" width="80" height="80" alt="PublisherName" style="border-radius:50%"><br>
+        <img src="https://avatars.githubusercontent.com/u/62213479?v=4&s=100" width="64" height="64" alt="PublisherName" style="border-radius:50%"><br>
         <b>PublisherName</b>
       </a><br>
-      <sub>Original Author</sub><br>
-      <sub>upstream fork · GNOME 48/49 support · dark mode fixes</sub>
+      <sub>Original Author</sub>
     </td>
-    <td align="center" width="160">
+    <td align="center" width="120">
       <a href="https://github.com/Stubennerd">
-        <img src="https://github.com/Stubennerd.png?size=100" width="80" height="80" alt="Stubennerd" style="border-radius:50%"><br>
+        <img src="https://github.com/Stubennerd.png?size=100" width="64" height="64" alt="Stubennerd" style="border-radius:50%"><br>
         <b>Stubennerd</b>
       </a><br>
-      <sub>Translator</sub><br>
-      <sub>🇩🇪 German</sub>
+      <sub>Translator 🇩🇪</sub>
     </td>
-    <td align="center" width="160">
+    <td align="center" width="120">
       <a href="https://github.com/izak-ag">
-        <img src="https://avatars.githubusercontent.com/u/91832540?v=4&s=100" width="80" height="80" alt="Izak A." style="border-radius:50%"><br>
+        <img src="https://avatars.githubusercontent.com/u/91832540?v=4&s=100" width="64" height="64" alt="Izak A." style="border-radius:50%"><br>
         <b>Izak A.</b>
       </a><br>
-      <sub>Translator</sub><br>
-      <sub>🇧🇷 Brazilian Portuguese</sub>
+      <sub>Translator 🇧🇷</sub>
     </td>
-    <td align="center" width="160">
+    <td align="center" width="120">
       <a href="https://github.com/iineolineii">
-        <img src="https://avatars.githubusercontent.com/u/135314083?v=4&s=100" width="80" height="80" alt="NeoLine" style="border-radius:50%"><br>
+        <img src="https://avatars.githubusercontent.com/u/135314083?v=4&s=100" width="64" height="64" alt="NeoLine" style="border-radius:50%"><br>
         <b>NeoLine</b>
       </a><br>
-      <sub>Translator</sub><br>
-      <sub>🇷🇺 Russian</sub>
+      <sub>Translator 🇷🇺</sub>
     </td>
   </tr>
 </table>
